@@ -1,11 +1,13 @@
 package main
 
 import (
+	"time"
+
 	"github.com/SamW94/gokedex/internal/pokeapi"
 )
 
 func main() {
-	webClient := pokeapi.NewClient()
+	webClient := pokeapi.NewClient(time.Second*5, time.Second*5)
 	config := &config{
 		pokeapiClient: webClient,
 	}
