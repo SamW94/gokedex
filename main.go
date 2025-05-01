@@ -1,26 +1,14 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"github.com/SamW94/gokedex/internal/pokeapi"
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	for {
-		print("Pokedex >")
-		scanner.Scan()
-		userInput := scanner.Text()
-
-		cleanedInput := cleanInput(userInput)
-		inputCommand := cleanedInput[0]
-
-		command, ok := supportedCommands[inputCommand]
-		if !ok {
-			fmt.Println("Unknown command")
-		} else {
-			command.callback()
-		}
+	webClient := pokeapi.NewClient()
+	config := &config{
+		pokeapiClient: webClient,
 	}
+
+	startRepl(config)
 }
