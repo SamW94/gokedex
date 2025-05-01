@@ -3,6 +3,7 @@ package pokeapi
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -23,6 +24,14 @@ func (wc *WebClient) GetLocations(pageURL *string) (locationAreaEndpointResponse
 		url = *pageURL
 	}
 
+	if cachedData, found := wc.cache.Get(url); found {
+		var response locationAreaEndpointResponse
+		if err := json.Unmarshal(cachedData, &response); err != nil {
+			return locationAreaEndpointResponse{}, fmt.Errorf("error unmarshalling cached data: %w", err)
+		}
+		return response, nil
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return locationAreaEndpointResponse{}, fmt.Errorf("error creating HTTP GET request: %w", err)
@@ -39,11 +48,17 @@ func (wc *WebClient) GetLocations(pageURL *string) (locationAreaEndpointResponse
 		return locationAreaEndpointResponse{}, fmt.Errorf("response status code was: %d", resp.StatusCode)
 	}
 
-	locationAreaEndpointResponse := locationAreaEndpointResponse{}
-	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&locationAreaEndpointResponse); err != nil {
-		return locationAreaEndpointResponse, fmt.Errorf("error decoding response body: %w", err)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return locationAreaEndpointResponse{}, fmt.Errorf("error reading response body: %w", err)
 	}
 
-	return locationAreaEndpointResponse, nil
+	wc.cache.Add(url, bodyBytes)
+
+	var response locationAreaEndpointResponse
+	if err := json.Unmarshal(bodyBytes, &response); err != nil {
+		return locationAreaEndpointResponse{}, fmt.Errorf("error unmarshalling response body: %w", err)
+	}
+
+	return response, nil
 }
