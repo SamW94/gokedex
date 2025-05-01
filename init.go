@@ -20,4 +20,10 @@ func init() {
 		description: "Exit the Pokedex",
 		callback:    commandExit,
 	}
+
+	supportedCommands["map"] = cliCommand{
+		name:        "map",
+		description: "Display the names of 20 location areas in the Pokemon world.",
+		callback:    commandMap,
+	}
 }
