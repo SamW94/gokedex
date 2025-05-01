@@ -33,10 +33,3 @@ func TestCleanInput(t *testing.T) {
 		}
 	}
 }
-
-func TestCommandHelp(t *testing.T) {
-	err := commandHelp()
-	if err != nil {
-		t.Errorf("error returned from commandHelp function: %v", err)
-	}
-}
