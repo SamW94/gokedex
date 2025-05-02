@@ -11,6 +11,7 @@ func main() {
 	config := &config{
 		pokeapiClient: webClient,
 	}
+	pokedex := NewPokedex()
 
-	startRepl(config)
+	startRepl(config, &pokedex)
 }
