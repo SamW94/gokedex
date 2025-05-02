@@ -25,7 +25,7 @@ func (p *Pokedex) HaveCaught(pokemonName string) bool {
 	return ok
 }
 
-func (p *Pokedex) GetPokemonAttributes(pokemonName string) ([]string, error) {
+func (p *Pokedex) GetPokemonAttributes(pokemonName string) []string {
 	pokemonAttributes := make([]string, 0)
 
 	pokemon := p.CaughtPokemon[pokemonName]
@@ -50,5 +50,5 @@ func (p *Pokedex) GetPokemonAttributes(pokemonName string) ([]string, error) {
 	pokemonAttributes = append(pokemonAttributes, statsSlice...)
 	pokemonAttributes = append(pokemonAttributes, typesSlice...)
 
-	return pokemonAttributes, nil
+	return pokemonAttributes
 }

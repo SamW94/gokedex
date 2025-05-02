@@ -16,7 +16,7 @@ func commandInspect(cfg *config, pokedex *Pokedex, args ...string) error {
 		return errors.New("you have not caught that pokemon")
 	}
 
-	attributes, _ := pokedex.GetPokemonAttributes(name)
+	attributes := pokedex.GetPokemonAttributes(name)
 	for _, attribute := range attributes {
 		fmt.Println(attribute)
 	}
