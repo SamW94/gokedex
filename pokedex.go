@@ -25,6 +25,15 @@ func (p *Pokedex) HaveCaught(pokemonName string) bool {
 	return ok
 }
 
+func (p *Pokedex) AllCaughtPokemon() []string {
+	caughtPokemon := make([]string, 0)
+	for k := range p.CaughtPokemon {
+		caughtPokemon = append(caughtPokemon, k)
+	}
+
+	return caughtPokemon
+}
+
 func (p *Pokedex) GetPokemonAttributes(pokemonName string) []string {
 	pokemonAttributes := make([]string, 0)
 
@@ -36,14 +45,14 @@ func (p *Pokedex) GetPokemonAttributes(pokemonName string) []string {
 	statsSlice = append(statsSlice, "Stats:")
 
 	for _, stat := range pokemon.Stats {
-		statsSlice = append(statsSlice, fmt.Sprintf("	-%v: %v", stat.Stat.Name, stat.BaseStat))
+		statsSlice = append(statsSlice, fmt.Sprintf("  -%v: %v", stat.Stat.Name, stat.BaseStat))
 	}
 
 	typesSlice := make([]string, 0)
 	typesSlice = append(typesSlice, "Types:")
 
 	for _, pokeType := range pokemon.Types {
-		typesSlice = append(typesSlice, fmt.Sprintf("	- %v", pokeType.Type.Name))
+		typesSlice = append(typesSlice, fmt.Sprintf("  - %v", pokeType.Type.Name))
 	}
 
 	pokemonAttributes = append(pokemonAttributes, []string{name, height, weight}...)
