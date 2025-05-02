@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	webClient := pokeapi.NewClient(time.Second*5, time.Second*5)
+	webClient := pokeapi.NewClient(time.Second*5, time.Minute*5)
 	config := &config{
 		pokeapiClient: webClient,
 	}

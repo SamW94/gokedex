@@ -10,33 +10,37 @@ import (
 )
 
 type config struct {
-	pokeapiClient    pokeapi.WebClient
+	pokeapiClient    pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
 }
 
 func startRepl(cfg *config) {
-	scanner := bufio.NewScanner(os.Stdin)
+	reader := bufio.NewScanner(os.Stdin)
 	for {
-		print("Pokedex>")
-		scanner.Scan()
+		fmt.Print("Pokedex > ")
+		reader.Scan()
 
-		cleanedInput := cleanInput(scanner.Text())
-		if len(cleanedInput) == 0 {
+		words := cleanInput(reader.Text())
+		if len(words) == 0 {
 			continue
 		}
 
-		inputCommand := cleanedInput[0]
+		commandName := words[0]
+		args := []string{}
+		if len(words) > 1 {
+			args = words[1:]
+		}
 
-		command, ok := getCommands()[inputCommand]
-		if !ok {
-			fmt.Println("Unknown command")
-			continue
-		} else {
-			err := command.callback(cfg)
+		command, exists := getCommands()[commandName]
+		if exists {
+			err := command.callback(cfg, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
+			continue
+		} else {
+			fmt.Println("Unknown command")
 			continue
 		}
 	}
@@ -51,7 +55,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -61,20 +65,25 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+		"explore": {
+			name:        "explore <location_name>",
+			description: "Explore a location",
+			callback:    commandExplore,
+		},
+		"map": {
+			name:        "map",
+			description: "Get the next page of locations",
+			callback:    commandMapf,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Get the previous page of locations",
+			callback:    commandMapb,
+		},
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    commandExit,
-		},
-		"map": {
-			name:        "map",
-			description: "Display the next 20 location areas in the Pokemon world.",
-			callback:    commandMap,
-		},
-		"mapb": {
-			name:        "mapb",
-			description: "Display the previous 20 location areas in the Pokemon world.",
-			callback:    commandMapb,
 		},
 	}
 }
