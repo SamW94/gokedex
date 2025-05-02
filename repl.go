@@ -15,7 +15,7 @@ type config struct {
 	prevLocationsURL *string
 }
 
-func startRepl(cfg *config) {
+func startRepl(cfg *config, pokedex *Pokedex) {
 	reader := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -34,7 +34,7 @@ func startRepl(cfg *config) {
 
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(cfg, args...)
+			err := command.callback(cfg, pokedex, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -55,7 +55,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config, ...string) error
+	callback    func(*config, *Pokedex, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -64,6 +64,11 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Catch a Pokemon!",
+			callback:    commandCatch,
 		},
 		"explore": {
 			name:        "explore <location_name>",

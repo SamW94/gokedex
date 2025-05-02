@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-// GetLocation -
 func (c *Client) GetLocation(locationName string) (Location, error) {
 	url := baseURL + "/location-area/" + locationName
 
