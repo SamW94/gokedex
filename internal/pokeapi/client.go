@@ -7,16 +7,16 @@ import (
 	"github.com/SamW94/gokedex/internal/pokecache"
 )
 
-type WebClient struct {
+type Client struct {
+	cache      pokecache.Cache
 	httpClient http.Client
-	cache      *pokecache.Cache
 }
 
-func NewClient(timeout time.Duration, cacheInterval time.Duration) WebClient {
-	return WebClient{
+func NewClient(timeout, cacheInterval time.Duration) Client {
+	return Client{
+		cache: pokecache.NewCache(cacheInterval),
 		httpClient: http.Client{
 			Timeout: timeout,
 		},
-		cache: pokecache.NewCache(cacheInterval),
 	}
 }
