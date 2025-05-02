@@ -13,26 +13,25 @@ func commandCatch(cfg *config, pokedex *Pokedex, args ...string) error {
 
 	name := args[0]
 
+	if pokedex.HaveCaught(name) {
+		fmt.Printf("You already have a %s in your Pokedex\n", name)
+		return nil
+	}
+
 	fmt.Printf("Throwing a Pokeball at %s...\n", name)
 	pokemon, err := cfg.pokeapiClient.GetPokemon(name)
 	if err != nil {
 		return err
 	}
 
-	pokemonBaseXP := pokemon.BaseExperience
-	chanceToCatch := rand.Intn(1000)
+	chanceToCatch := rand.Intn(pokemon.BaseExperience)
 
-	if pokemonBaseXP > chanceToCatch {
+	if chanceToCatch > 40 {
 		fmt.Printf("%s escaped!\n", name)
 	} else {
-		if pokedex.HaveCaught(name) {
-			fmt.Printf("You already have a %s in your Pokedex\n", name)
-			return nil
-		} else {
-			fmt.Printf("Adding %s to your Pokedex!\n", name)
-			pokedex.AddToPokedex(name, pokemon)
-			return nil
-		}
+		fmt.Printf("%s was caught!\n", name)
+		pokedex.AddToPokedex(name, pokemon)
+		return nil
 	}
 
 	return nil
